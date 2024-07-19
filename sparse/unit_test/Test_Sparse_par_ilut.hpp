@@ -202,20 +202,30 @@ void run_test_par_ilut_precond() {
   // Create a diagonally dominant sparse matrix to test:
   //  par_ilut settings max_iters, res_delta_stop, fill_in_limit, and
   //  async_update are all left as defaults
-  constexpr auto n             = 5000;
-  constexpr auto m             = 15;
-  constexpr auto tol           = ParIlut::TolMeta<float_t>::value;
-  constexpr auto numRows       = n;
-  constexpr auto numCols       = n;
-  constexpr auto diagDominance = 1;
-  constexpr bool verbose       = false;
+  // constexpr auto n             = 5000;
+  // constexpr auto m             = 15;
+  // constexpr auto tol           = ParIlut::TolMeta<float_t>::value;
+  // constexpr auto numRows       = n;
+  // constexpr auto numCols       = n;
+  // constexpr auto diagDominance = 1;
+  // constexpr bool verbose       = false;
 
-  size_type nnz = 10 * numRows;
-  auto A = KokkosSparse::Impl::kk_generate_diagonally_dominant_sparse_matrix<
-      sp_matrix_type>(numRows, numCols, nnz, 0, lno_t(0.01 * numRows),
-                      diagDominance);
+  // size_type nnz = 10 * numRows;
+  // auto A = KokkosSparse::Impl::kk_generate_diagonally_dominant_sparse_matrix<
+  //     sp_matrix_type>(numRows, numCols, nnz, 0, lno_t(0.01 * numRows),
+  //                     diagDominance);
 
+  auto A = KokkosSparse::Impl::read_kokkos_crst_matrix<sp_matrix_type>(
+    "output1.mm");
   KokkosSparse::sort_crs_matrix(A);
+
+  const auto n             = A.numRows();
+  const auto m             = 15;
+  const auto tol           = ParIlut::TolMeta<float_t>::value;
+  const auto numRows       = n;
+  const auto numCols       = n;
+  //constexpr auto diagDominance = 1;
+  constexpr bool verbose       = false;
 
   // Make kernel handles
   KernelHandle kh;
